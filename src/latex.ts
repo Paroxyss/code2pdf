@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import { File, Tree } from "./types"
 import { buildGlobalTree, buildTrees } from "./index";
 import { EXT_MAP } from "./config";
+import { sortFile } from "./util";
 
 /**
  * Get valid ext
@@ -31,7 +32,7 @@ function texText(l: string): string {
 export function generateLatexTree(tree: Tree, depth: number, displayLine: boolean): string {
   let latexCode = `.${depth} ${texText(tree.name)} $ref$.\n`;
   if (tree.isLast)
-    latexCode = latexCode.replace(tree.name, `\\textcolor{blue}{${texText(tree.name)}}`);
+    latexCode = latexCode.replace(tree.name, `\\textcolor{orange}{${texText(tree.name)}}`);
   if (!tree.name.endsWith("/") && displayLine)
     latexCode = latexCode.replace("$ref$", `\\DTcomment{\\pageref{${tree.abs.replace(/[^a-z]+/gi, '').slice(-20, -1)}}}`)
   latexCode = latexCode.replace("$ref$", "")
@@ -70,7 +71,8 @@ export function generateLatexPage(file: File): string {
  * @returns {string}
  */
 export function generateLatexProject(path: string): string {
-  const files = buildTrees(path);
+  const files = buildTrees(path)
+	.sort(sortFile)
   const filesContent = files.map(f => generateLatexPage(f));
   const globalTree: string = generateLatexTree(buildGlobalTree(path), 1, true)
 

@@ -4,6 +4,7 @@ import path from 'path';
 import { Tree, File } from "./types"
 import { generateLatexProject } from './latex';
 import { FILE_TAG, IGNORE_FILES, IGNORE_FOLDERS, PROJECT_PATH } from './config';
+import { sortFile } from './util';
 
 
 
@@ -155,7 +156,7 @@ export function sortTree(tree: Tree): Tree {
   let sortFiles = tree.subTree
     .filter(x => !x.name.endsWith("/"))
     .filter(x => !IGNORE_FILES.includes(x.name))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort(sortFile)
 
   sortFiles.forEach(x => sortFolders.push(x))
   tree.subTree = sortFolders
@@ -178,7 +179,7 @@ export function sortGlobalTree(tree: Tree): Tree {
   let sortFiles = tree.subTree
     .filter(x => !x.name.endsWith("/"))
     .filter(x => !IGNORE_FILES.includes(x.name))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort(sortFile)
 
   sortFiles.forEach(x => sortFolders.push(x))
   tree.subTree = sortFolders
